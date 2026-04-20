@@ -1,0 +1,19 @@
+:root {
+  /* 🎨 Cores principais */
+  --primary: #22c55e;
+  --primary-dark: #16a34a;
+
+  /* 🧱 Base */
+  --bg: #f5f7f9;
+  --white: #ffffff;
+  --text: #1f2937;
+  --gray: #6b7280;
+  --border: #e5e7eb;
+
+  /* 💰 Estados */
+  --success: #22c55e;
+  --danger: #ef4444;
+
+  /* 📏 Espaçamentos */
+  --radius: 12px;
+}

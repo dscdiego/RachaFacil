@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  background: #f5f7f9;
+  font-family: "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app {
+  max-width: 420px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #ffffff;
+  position: relative;
+  padding-bottom: 80px;
+}
+
+.app-proprietario {
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f7f9;
+  position: relative;
+}

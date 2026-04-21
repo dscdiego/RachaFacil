@@ -18,7 +18,6 @@ import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
@@ -26,7 +25,7 @@ import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
 const reservasMock = [
   {
     id: 1,
-    cliente: "João Silva",
+    cliente: "Gabriel Batista",
     data: "Hoje",
     horario: "18:00 - 19:00",
     valor: 120,
@@ -34,7 +33,7 @@ const reservasMock = [
   },
   {
     id: 2,
-    cliente: "Maria Costa",
+    cliente: "Diego Sousa",
     data: "Hoje",
     horario: "20:00 - 21:00",
     valor: 100,

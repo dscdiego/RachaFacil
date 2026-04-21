@@ -1,134 +1,191 @@
 import React, { useEffect, useState } from "react";
 import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Stack,
-  Chip
+  Container, Typography, Card, CardContent,
+  Button, Box, Chip, Dialog, DialogTitle,
+  DialogContent, DialogContentText, DialogActions
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import EventAvailableRoundedIcon from "@mui/icons-material/EventAvailableRounded";
+import CalendarTodayRoundedIcon from "@mui/icons-material/CalendarTodayRounded";
 
 const reservasPadrao = [
-  {
-    id: 1,
-    arena: "Arena Society",
-    horario: "18:00 - 19:00",
-    data: "Hoje",
-    status: "Pendente",
-    valor: 120
-  },
-  {
-    id: 2,
-    arena: "Arena Beach Fortaleza",
-    horario: "20:00 - 21:00",
-    data: "Amanhã",
-    status: "Confirmada",
-    valor: 90
-  }
+  { id: 1, arena: "Arena Society",       horario: "18:00 - 19:00", data: "Hoje",   status: "Pendente",   valor: 120 },
+  { id: 2, arena: "Arena Beach Fortaleza", horario: "20:00 - 21:00", data: "Amanhã", status: "Confirmada", valor: 90  },
 ];
+
+const statusStyles = {
+  Confirmada: { bg: "#dcfce7", color: "#166534" },
+  Pendente:   { bg: "#fef3c7", color: "#92400e" },
+  Cancelada:  { bg: "#fee2e2", color: "#991b1b" },
+};
 
 export default function Reservas() {
   const navigate = useNavigate();
   const [reservas, setReservas] = useState([]);
+  const [cancelando, setCancelando] = useState(null);
 
   useEffect(() => {
-    const reservasSalvas = JSON.parse(localStorage.getItem("reservas"));
-
-    if (reservasSalvas && reservasSalvas.length > 0) {
-      setReservas(reservasSalvas);
-    } else {
-      setReservas(reservasPadrao);
-      localStorage.setItem("reservas", JSON.stringify(reservasPadrao));
-    }
+    const salvas = JSON.parse(localStorage.getItem("reservas"));
+    setReservas(salvas?.length ? salvas : reservasPadrao);
   }, []);
 
-  const atualizarReservas = (novasReservas) => {
-    setReservas(novasReservas);
-    localStorage.setItem("reservas", JSON.stringify(novasReservas));
+  const salvar = (novas) => {
+    setReservas(novas);
+    localStorage.setItem("reservas", JSON.stringify(novas));
   };
 
-  const handlePagamento = (reserva) => {
-    navigate("/pagamento", {
-      state: reserva
-    });
+  const confirmarCancelamento = () => {
+    salvar(reservas.filter((r) => r.id !== cancelando));
+    setCancelando(null);
   };
 
-  const handleCancelar = (id) => {
-    const novasReservas = reservas.filter((reserva) => reserva.id !== id);
-    atualizarReservas(novasReservas);
-  };
+  // Agrupa por data
+  const grupos = reservas.reduce((acc, r) => {
+    const chave = r.data || "Sem data";
+    if (!acc[chave]) acc[chave] = [];
+    acc[chave].push(r);
+    return acc;
+  }, {});
 
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        mt: 3,
-        mb: 10
-      }}
-    >
-      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
+    <Container maxWidth="sm" sx={{ pt: 3, pb: 12, px: { xs: 2, sm: 3 } }}>
+      <Typography sx={{ fontWeight: 800, fontSize: "1.4rem", color: "#111827", mb: 3 }}>
         Minhas Reservas
       </Typography>
 
       {reservas.length === 0 ? (
-        <Typography color="text.secondary">
-          Você ainda não possui reservas.
-        </Typography>
-      ) : (
-        reservas.map((r) => (
-          <Card
-            key={r.id}
+        <Box
+          sx={{
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            py: 10, gap: 2,
+          }}
+        >
+          <Box
             sx={{
-              mb: 2,
-              borderRadius: 3,
-              boxShadow: 3
+              width: 64, height: 64, borderRadius: "50%",
+              backgroundColor: "#f3f4f6",
+              display: "flex", alignItems: "center", justifyContent: "center",
             }}
           >
-            <CardContent>
-              <Stack spacing={1}>
-                <Typography variant="h6" fontWeight="bold">
-                  {r.arena}
-                </Typography>
+            <EventAvailableRoundedIcon sx={{ fontSize: 30, color: "#9ca3af" }} />
+          </Box>
+          <Typography sx={{ fontWeight: 700, color: "#374151" }}>
+            Nenhuma reserva ainda
+          </Typography>
+          <Typography sx={{ color: "#9ca3af", fontSize: "0.85rem", textAlign: "center" }}>
+            Busque uma arena e faça sua primeira reserva!
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => navigate("/buscar")}
+            sx={{
+              mt: 1, borderRadius: "12px", textTransform: "none",
+              fontWeight: 700, backgroundColor: "#16a34a",
+              "&:hover": { backgroundColor: "#15803d" },
+            }}
+          >
+            Buscar arenas
+          </Button>
+        </Box>
+      ) : (
+        Object.entries(grupos).map(([data, items]) => (
+          <Box key={data} sx={{ mb: 3 }}>
+            {/* Cabeçalho do grupo */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+              <CalendarTodayRoundedIcon sx={{ fontSize: 15, color: "#9ca3af" }} />
+              <Typography sx={{ fontWeight: 700, fontSize: "0.82rem", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                {data}
+              </Typography>
+            </Box>
 
-                <Typography color="text.secondary">
-                  {r.data} • {r.horario}
-                </Typography>
+            {items.map((r, i) => (
+              <React.Fragment key={r.id}>
+                <Card sx={{ borderRadius: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", mb: 1.5 }}>
+                  <CardContent sx={{ p: "16px !important" }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
+                      <Typography sx={{ fontWeight: 800, fontSize: "0.95rem", color: "#111827" }}>
+                        {r.arena}
+                      </Typography>
+                      <Chip
+                        label={r.status}
+                        size="small"
+                        sx={{
+                          fontWeight: 700, fontSize: "0.7rem", height: 24,
+                          backgroundColor: statusStyles[r.status]?.bg,
+                          color: statusStyles[r.status]?.color,
+                        }}
+                      />
+                    </Box>
 
-                <Typography color="text.secondary">
-                  Valor: R$ {Number(r.valor).toFixed(2).replace(".", ",")}
-                </Typography>
+                    <Typography sx={{ fontSize: "0.82rem", color: "#6b7280", mb: 0.5 }}>
+                      🕒 {r.horario}
+                    </Typography>
+                    <Typography sx={{ fontSize: "0.82rem", color: "#16a34a", fontWeight: 700 }}>
+                      R$ {Number(r.valor).toFixed(2).replace(".", ",")}
+                    </Typography>
 
-                <Chip
-                  label={r.status}
-                  color={r.status === "Confirmada" ? "success" : "warning"}
-                  sx={{ width: "fit-content" }}
-                />
-
-                <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: "wrap" }}>
-                  {r.status === "Pendente" && (
-                    <Button
-                      variant="contained"
-                      onClick={() => handlePagamento(r)}
-                    >
-                      Pagar
-                    </Button>
-                  )}
-
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleCancelar(r.id)}
-                  >
-                    Cancelar
-                  </Button>
-                </Stack>
-              </Stack>
-            </CardContent>
-          </Card>
+                    <Box sx={{ display: "flex", gap: 1, mt: 2, flexWrap: "wrap" }}>
+                      {r.status === "Pendente" && (
+                        <Button
+                          variant="contained" size="small"
+                          onClick={() => navigate("/pagamento", { state: r })}
+                          sx={{
+                            borderRadius: "10px", textTransform: "none",
+                            fontWeight: 700, fontSize: "0.8rem",
+                            backgroundColor: "#16a34a",
+                            "&:hover": { backgroundColor: "#15803d" },
+                          }}
+                        >
+                          Pagar agora
+                        </Button>
+                      )}
+                      {r.status !== "Cancelada" && (
+                        <Button
+                          variant="outlined" color="error" size="small"
+                          onClick={() => setCancelando(r.id)}
+                          sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 700, fontSize: "0.8rem" }}
+                        >
+                          Cancelar
+                        </Button>
+                      )}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </React.Fragment>
+            ))}
+          </Box>
         ))
       )}
+
+      {/* Dialog de confirmação de cancelamento */}
+      <Dialog
+        open={Boolean(cancelando)}
+        onClose={() => setCancelando(null)}
+        PaperProps={{ sx: { borderRadius: 3, px: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 700 }}>Cancelar reserva?</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ fontSize: "0.9rem" }}>
+            Tem certeza que deseja cancelar esta reserva? Esta ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ pb: 2, px: 3, gap: 1 }}>
+          <Button
+            onClick={() => setCancelando(null)}
+            sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 700, color: "#6b7280" }}
+          >
+            Voltar
+          </Button>
+          <Button
+            variant="contained" color="error"
+            onClick={confirmarCancelamento}
+            sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 700 }}
+          >
+            Sim, cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

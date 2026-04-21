@@ -6,6 +6,7 @@ import {
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import SportsSoccerRoundedIcon from "@mui/icons-material/SportsSoccerRounded";
+import { useNavigate } from "react-router-dom";
 import ProprietarioLayout from "../../components/ProprietarioLayout";
 
 const arenas = [
@@ -42,6 +43,8 @@ const statusStyles = {
 };
 
 export default function MinhasArenas() {
+  const navigate = useNavigate();
+
   return (
     <ProprietarioLayout
       title="Minhas Arenas"
@@ -52,6 +55,7 @@ export default function MinhasArenas() {
         <Button
           variant="contained"
           startIcon={<AddRoundedIcon />}
+          onClick={() => navigate("/proprietario/cadastrar-arena")}
           sx={{
             borderRadius: "12px",
             textTransform: "none",

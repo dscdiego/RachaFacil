@@ -1,7 +1,7 @@
-# RachaFácil ⚽
+# ArenaHub⚽
 
 ## 📌 Sobre o projeto
-O **RachaFácil** é uma aplicação web desenvolvida em **React** e **Material UI** para auxiliar proprietários de arenas esportivas na gestão de seus espaços.  
+O **ArenaHub** é uma aplicação web desenvolvida em **React** e **Material UI** para auxiliar proprietários de arenas esportivas na gestão de seus espaços.  
 Com ele, é possível cadastrar arenas, controlar horários, acompanhar reservas e visualizar relatórios financeiros de forma simples e eficiente.
 
 ## 🚀 Funcionalidades
@@ -19,7 +19,7 @@ Com ele, é possível cadastrar arenas, controlar horários, acompanhar reservas
 
 ## 📂 Estrutura do projeto
 
-rachafacil/
+ArenaHub/
  ├── .vercel/                # Configurações de deploy
  ├── node_modules/           # Dependências instaladas
  ├── public/                 # Arquivos públicos (favicon, index.html, etc.)
